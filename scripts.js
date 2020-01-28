@@ -5,33 +5,25 @@ $(document).ready(function () {
     console.log("Loaded.");
 });
 
+let oldBg = $('#126').css("background-color");
+
 // shortcut variables.
 let keysUpper = '#keyboard-upper-container';
 let keysLower = '#keyboard-lower-container';
 
-// test buttons.
-$('body').prepend('<button id="toggleLower">Toggle lowercase keys</button>');
-$('body').prepend('<button id="toggleUpper">Toggle uppercase keys</button>');
-$('#toggleLower').click(function() {
-    $(keysLower).toggle();
-});
-$('#toggleUpper').click(function() {
-    $(keysUpper).toggle();
-});
-
-// shift listening.
+// BEGIN shift listening.
 let shiftPressed = false;
-$(document).bind('keydown', function(event) {
+$(document).bind('keydown', function (event) {
     if (event.which === 16) {
         shiftPressed = true;
     }
 })
-$(document).bind('keyup', function(event) {
+$(document).bind('keyup', function (event) {
     if (event.which === 16) {
         shiftPressed = false;
     }
 })
-$(document).bind('keydown keyup', function(event) {
+$(document).bind('keydown keyup', function (event) {
     if (shiftPressed === true) {
         $(keysUpper).show();
         $(keysLower).hide();
@@ -40,3 +32,30 @@ $(document).bind('keydown keyup', function(event) {
         $(keysLower).show();
     }
 })
+// END shift listening.
+
+// BEGIN hilighting.
+let keyPressed;
+$(document).keypress(function (event) {
+    keyCheck(event);
+    keyHilight();
+});
+function keyCheck(event) {
+    keyPressed = event.keyCode;
+}
+function keyHilight() {
+    $(`#${keyPressed}`).css("background-color", "#ffff00");
+}
+function keyClear() {
+    if ($(keyPressed).keydown() === false) {
+        console.log("no longer pressed");
+        $(`#${keyPressed}`).css("background-color", oldBg);
+        $(keyPressed).bind('keyup', function(event) {
+            $(`#${keyPressed}`).css("background-color", oldBg);
+        });
+    }
+}
+$(document).bind('keyup', function(event) {
+    $(`.key`).css("background-color", oldBg);
+});
+// END hilighting.
