@@ -2,10 +2,14 @@
 $(document).ready(function () {
     console.log("Loading..");
     $(keysUpper).toggle();
-    console.log("Loaded.");
 });
 
+// save old key background color.
 let oldBg = $('#126').css("background-color");
+
+let sentences = ['ten ate neite ate nee enet ite ate inet ent eate', 'Too ato too nOt enot one totA not anot tOO aNot', 'oat itain oat tain nate eate tea anne inant nean', 'itant eate anot eat nato inate eat anot tain eat', 'nee ene ate ite tent tiet ent ine ene ete ene ate'];
+let currentSentence = 0;
+$('#sentence').append(sentences[currentSentence]);
 
 // shortcut variables.
 let keysUpper = '#keyboard-upper-container';
@@ -42,6 +46,8 @@ $(document).keypress(function (event) {
 });
 function keyCheck(event) {
     keyPressed = event.keyCode;
+    keyValue = String.fromCharCode(event.which);
+    console.log(keyValue);
 }
 function keyHilight() {
     $(`#${keyPressed}`).css("background-color", "#ffff00");
@@ -56,6 +62,8 @@ function keyClear() {
     }
 }
 $(document).bind('keyup', function(event) {
-    $(`.key`).css("background-color", oldBg);
+    $('.key').css("background-color", oldBg);
 });
 // END hilighting.
+
+console.log("Loaded.");
