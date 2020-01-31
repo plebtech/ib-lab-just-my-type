@@ -5,6 +5,9 @@ let letterIndex = 0; // current letter position within sentence.
 let currentSentence = SENTENCES[sentenceIndex]; // current sentence VALUE (the sentence string).
 let currentLetter = currentSentence[letterIndex]; // current letter VALUE (the letter).
 let mistakes = 0; // counter for number of wrong keypresses.
+let clockStarted = false; // controls whether timer has begun.
+let stopwatch;
+let elapsed = 0;
 
 // on load.
 $('#sentence').text(currentSentence); // set initial value.
@@ -45,7 +48,7 @@ function glyphicon(e) { // update 'feedback' based on whether keypress matches c
 function letterWatch() { // updates sentence/letter based on keystroke.
     if (letterIndex === (currentSentence.length - 1)) { // checks for end of sentence.
         sentenceIndex++;
-        // feedbackClear();
+        feedbackClear();
         if (sentenceIndex >= (SENTENCES.length - 1)) { // checks for end of game.
             gameEnd();
         } else { // if not end of game, move to next line.
@@ -55,6 +58,10 @@ function letterWatch() { // updates sentence/letter based on keystroke.
             blockReset();
         }
     } else { // if not end of sentence, proceed to next letter.
+        if (clockStarted === false) {
+            clockStarted = true;
+            stopwatch = setInterval(clock, 1000);
+        }
         letterIndex++;
         updateSentence();
         updateLetter();
@@ -75,6 +82,7 @@ function blockReset() { // move block to initial position.
     $('#yellow-block').css("left", "0px");
 }
 function gameEnd() { // update status / remove css once game is over.
+    clearInterval(stopwatch);
     $('#sentence').text("You've reached the end!");
     $('#target-letter').text('');
     $(document).unbind('keypress', keypressMaster);
@@ -82,8 +90,16 @@ function gameEnd() { // update status / remove css once game is over.
         keyHilight(e);
     });
     $('#yellow-block').remove();
-    feedbackClear();
+    results();
 }
 function feedbackClear() {
     $('#feedback').html('');
+}
+function results() {
+    let wpm = (54 / (elapsed / 60) - 2 * mistakes);
+    $('#feedback').html(`<span>Finished in ${elapsed} seconds. ${mistakes} mistakes. Words per minute: ${wpm}.</span>`);
+}
+function clock() {
+        elapsed++;
+        console.log(elapsed);
 }
