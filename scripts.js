@@ -81,25 +81,46 @@ function blockMove() { // move the hilight block through the sentence.
 function blockReset() { // move block to initial position.
     $('#yellow-block').css("left", "0px");
 }
-function gameEnd() { // update status / remove css once game is over.
+function gameEnd() { // update status / remove css & most listeners once game is over.
     clearInterval(stopwatch);
     $('#sentence').text("You've reached the end!");
     $('#target-letter').text('');
     $(document).unbind('keypress', keypressMaster);
-    $(document).keypress(function (e) {
-        keyHilight(e);
-    });
-    $('#yellow-block').remove();
+    $(document).keypress(keyHilight);
+    $('#yellow-block').toggle();
     results();
+    setTimeout(playAgain, 5000);
 }
 function feedbackClear() {
     $('#feedback').html('');
 }
 function results() {
-    let wpm = (54 / (elapsed / 60) - 2 * mistakes);
+    let wpm = Math.floor(54 / (elapsed / 60) - 2 * mistakes);
     $('#feedback').html(`<span>Finished in ${elapsed} seconds. ${mistakes} mistakes. Words per minute: ${wpm}.</span>`);
 }
 function clock() {
-        elapsed++;
-        console.log(elapsed);
+    elapsed++;
+    // console.log(elapsed);
 }
+function playAgain() { // reset variables, restart listeners.
+    $('#feedback').append(`<div id="queryUser"><div  style="margin: 1%; padding: 1%;">Play Again?</div><div><button id="no" style="margin: 1%; padding: 1%;">No thanks</button><button id="yes" style="margin: 1%; padding: 1%;">Yes!</button></div></div>`);
+    $('#no').click(function (e) {
+        $('#queryUser').remove();
+    });
+    $('#yes').click(function (e) {
+        sentenceIndex = 0;
+        letterIndex = 0;
+        currentSentence = SENTENCES[sentenceIndex];
+        currentLetter = currentSentence[letterIndex];
+        mistakes = 0;
+        clockStarted = false;
+        elapsed = 0;
+        feedbackClear();
+        $(document).unbind('keypress', keyHilight);
+        $(document).keypress(keypressMaster);
+        $('#sentence').text(currentSentence);
+        $('#target-letter').text(currentLetter);
+        $('#yellow-block').toggle();
+        $('#yellow-block').css("left", '');
+    });
+};
